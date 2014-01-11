@@ -4,15 +4,19 @@
 #include "stdafx.h"
 #include <iostream>
 #include <cstring>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
 char *compression(char *str)
 {
+	char buffer[33];
+	int bufsize=0;
 	int size=strlen(str);
 	if (size==0) return str;
 
 	char *compstr=(char *)malloc((size+1)*sizeof(char));
-	int i=0,j=0,count,tail;
+	int i=0,j=0,count;
 
 	while (i<size)
 	{
@@ -24,22 +28,12 @@ char *compression(char *str)
 			++i;
 		} //after while, i point to the next new char
 
-		//add count into compstr
-		tail=size-1;
-	    while (count!=0 && tail>=0)
-	    {
-		    compstr[tail--]=(count%10)+'0';
-		    count=count/10;
-	    }
-	   	if (count!=0 && tail<0) return str; //the compressed str is longer than original str
-
-	   	tail++;
-	   	while (j<size && tail<size)
-	    {
-		   	compstr[j++]=compstr[tail++];
-		}
-
-		if (tail<size && j==size) return str; //the compressed str is longer than original str
+		//sprintf_s(buffer,33,"%d",count);
+		_itoa_s(count,buffer,33,10);
+		bufsize=strlen(buffer);
+		if ((j+bufsize)>size) return str; //the compressed str is longer than original str
+		strncpy_s(compstr+j,size-j,buffer,bufsize);
+		j+=bufsize;
 	}
 
 	compstr[j]='\0';
@@ -50,13 +44,13 @@ char *compression(char *str)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	char *teststr="     ";
-	
+	char *teststr="aabbbccccd";
 	char *shortstr=compression(teststr);
-	if (strcmp(shortstr," 5")==0)
+	if (strcmp(shortstr,"a2b3c4d1")==0)
 		cout << "successful" << endl;
 	else
 		cout << "failed" << endl;
+	free(shortstr);
 	return 0;
 }
 
