@@ -12,25 +12,15 @@ struct linkList
 	linkList(int v) { val=v; next=NULL; }
 };
 
-void removeMid(linkList *head)
+void removeMid(linkList *node)
 {
-	if (!head || !(head->next)) 
-		return;
+	if (!node) return;
 
-	linkList *slow=head;
-	linkList *fast=(head->next)->next;
-
-	while (fast && fast->next)
+	if (node->next)
 	{
-		slow=slow->next;
-		fast=(fast->next)->next;
+		node->val=(node->next)->val;
+		node->next=(node->next)->next;
 	}
-
-	if (!fast)  return; //this list has even elements
-
-	//slow point to the element before middle element
-	slow->next = (slow->next)->next;
-	return;
 
 }
 
@@ -47,19 +37,20 @@ void printList(linkList *head)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	linkList *head=NULL,*tail=NULL;
-	for (int i=0;i<1;++i)
+	for (int i=0;i<3;++i)
 	{
-		linkList node(i);
+		linkList *node=new linkList(i);
 		if (!head)
-			head=tail=&node;
+			head=tail=node;
 		else
 		{
-			tail->next=&node;
+			tail->next=node;
 			tail=tail->next;
 		}
 	}
 	
-	removeMid(head);
+	printList(head);
+	removeMid(head->next);
 	printList(head);
 	return 0;
 }
